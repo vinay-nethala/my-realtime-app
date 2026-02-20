@@ -21,6 +21,8 @@ The widget is designed to be easily embedded into larger dashboard systems.
 ---
 
 ## 🏗️ Architecture
+## flowchart LR
+
 
 ```mermaid
 flowchart LR
