@@ -26,9 +26,9 @@ The widget is designed to be easily embedded into larger dashboard systems.
 
 ```mermaid
 flowchart LR
-    A[Mock WebSocket Server\n(Node + ws)]
+    A[Mock WebSocket Server (Node + ws)]
     B[WebSocket Client Service]
-    C[Global State Store\n(Context / Zustand)]
+    C[Global State Store (Context or Zustand)]
     D[RealtimeMetric Component]
     E[NotificationCenter Component]
 
@@ -66,7 +66,7 @@ sequenceDiagram
     participant UI
 
     Server->>WSClient: notification message
-    WSClient->>Store: parse & dispatch
+    WSClient->>Store: parse and dispatch
     Store->>UI: update notifications
     UI->>User: render notification
     User->>UI: dismiss
@@ -108,7 +108,6 @@ flowchart LR
 
 ```mermaid
 graph TD
-    App
     App --> WebSocketProvider
     WebSocketProvider --> RealtimeMetric
     WebSocketProvider --> NotificationCenter
