@@ -226,7 +226,7 @@ node mock-server/server.js
 cd frontend && npm run dev
 ```
 
-Open: http://localhost:3000
+Open: displayed url in cmd
 
 ---
 
