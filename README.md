@@ -1,59 +1,278 @@
-# Real-time Dashboard (React + Vite)
+# 🚀 Real-Time Dashboard Widget with WebSockets
 
-This repository contains a small real-time notification dashboard (frontend) and a mock WebSocket server for local development.
+A production-ready, responsive React dashboard widget that displays live KPI updates and an accessible notification system using WebSockets. This project demonstrates efficient real-time data handling, robust error management, and modern frontend architecture.
 
-## Quick start (local development)
+---
 
-1. Install dependencies
+## 📌 Project Overview
+
+This application provides:
+
+- ✅ Live **Active Users** metric via WebSocket  
+- ✅ Real-time **Notification Center**  
+- ✅ Automatic WebSocket reconnection  
+- ✅ Fully responsive UI (mobile → desktop)  
+- ✅ Accessible components (WCAG-friendly)  
+- ✅ Dockerized deployment  
+- ✅ Modular and scalable architecture  
+
+The widget is designed to be easily embedded into larger dashboard systems.
+
+---
+
+## 🏗️ Architecture
+
+### High-Level Flow
+
+```mermaid
+flowchart LR
+    A[Mock WebSocket Server\n(Node + ws)]
+    B[WebSocket Client Service]
+    C[Global State Store\n(Context / Zustand)]
+    D[RealtimeMetric Component]
+    E[NotificationCenter Component]
+
+    A -->|WebSocket Messages| B
+    B --> C
+    C --> D
+    C --> E
+```
+
+---
+
+### 🔄 WebSocket Connection Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Connecting
+    Connecting --> Connected
+    Connected --> Receiving
+    Receiving --> Connected
+    Connected --> Reconnecting : connection lost
+    Reconnecting --> Connected
+    Reconnecting --> Error : max retries
+    Error --> [*]
+```
+
+---
+
+### 🔔 Notification Data Flow
+
+```mermaid
+sequenceDiagram
+    participant Server
+    participant WSClient
+    participant Store
+    participant UI
+
+    Server->>WSClient: notification message
+    WSClient->>Store: parse & dispatch
+    Store->>UI: update notifications
+    UI->>User: render notification
+    User->>UI: dismiss
+    UI->>Store: remove notification
+```
+
+---
+
+### 🧠 State Management Flow
+
+```mermaid
+flowchart TD
+    WS[WebSocket Message]
+    Parser[Message Parser]
+    Store[Global State]
+    Metric[RealtimeMetric]
+    Notify[NotificationCenter]
+
+    WS --> Parser
+    Parser --> Store
+    Store --> Metric
+    Store --> Notify
+```
+
+---
+
+### 🐳 Docker Architecture
+
+```mermaid
+flowchart LR
+    User --> Browser
+    Browser --> FrontendContainer
+    FrontendContainer -->|ws://| MockServerContainer
+```
+
+---
+
+### 🧩 Component Architecture
+
+```mermaid
+graph TD
+    App
+    App --> WebSocketProvider
+    WebSocketProvider --> RealtimeMetric
+    WebSocketProvider --> NotificationCenter
+    NotificationCenter --> NotificationItem
+```
+
+---
+
+## 📂 Project Structure
+
+```
+project-root/
+│
+├── docker-compose.yml
+├── README.md
+├── .env.example
+│
+├── frontend/
+│   ├── Dockerfile
+│   ├── package.json
+│   └── src/
+│       ├── App.jsx
+│       ├── components/
+│       ├── services/
+│       ├── contexts/
+│       └── styles/
+│
+└── mock-server/
+    ├── Dockerfile
+    ├── package.json
+    └── server.js
+```
+
+---
+
+## ⚙️ Features
+
+### 🔴 Real-Time Metric
+
+- Displays **Active Users**
+- Updates automatically via WebSocket
+- Visual feedback on change
+- Connection status indicator
+
+### 🔔 Notification System
+
+- Real-time push notifications  
+- Individual dismiss support  
+- **Clear All** functionality  
+- Scrollable notification panel  
+- Accessible aria-live region  
+
+### 🌐 WebSocket Resilience
+
+- Automatic reconnection  
+- Exponential backoff  
+- JSON validation  
+- Error handling without crashes  
+
+### 📱 Responsive Design
+
+Supports:
+
+- Mobile (≥320px)  
+- Tablet  
+- Desktop (≤1920px)  
+
+---
+
+## ♿ Accessibility
+
+The application follows WCAG 2.1 AA best practices:
+
+- ✅ Keyboard navigable buttons  
+- ✅ Proper ARIA labels  
+- ✅ aria-live for notifications  
+- ✅ Focus management  
+- ✅ Semantic HTML  
+
+---
+
+
+
+## 🖥️ Local Development Setup
+
+### Clone repository
 
 ```bash
-npm install
+git clone <your-repo-url>
+cd project-root
 ```
 
-2. Create a `.env` file or copy from `.env.example`. For local development use:
-
-```
-VITE_WS_URL=ws://localhost:8080
-```
-
-3. Run the frontend in dev mode
+### Install dependencies
 
 ```bash
-npm run dev
+cd frontend && npm install
+cd ../mock-server && npm install
 ```
 
-Open the site at the port printed by Vite (usually `http://localhost:5173`). The frontend connects to the WebSocket URL in `VITE_WS_URL`.
+### Run locally
 
-## Docker (recommended for verifying Dockerization)
+```bash
+node mock-server/server.js
+cd frontend && npm run dev
+```
 
-Start both services (frontend + mock server) with Docker Compose:
+Open: http://localhost:3000
+
+---
+
+## 🐳 Docker Setup
+
+### Build and run
 
 ```bash
 docker-compose up --build
 ```
 
-This exposes:
-- Frontend: `localhost:3000` (nginx serves the built files at container port 80 mapped to host 3000)
-- Mock WebSocket server: `localhost:8080`
+### Stop
 
-Notes:
-- When running with Docker Compose, use `VITE_WS_URL=ws://mock-server:8080` inside container env (see `.env.example`). The Compose network resolves the service name `mock-server`.
-- The mock server broadcasts `metric` and `notification` messages on the WebSocket every few seconds.
+```bash
+docker-compose down
+```
 
-## Project structure
+---
 
-- `mock-server/` — Node WebSocket mock server (`server.js`) and `Dockerfile`.
-- Frontend — React + Vite app located at the repository root (`src/`, `index.html`, `Dockerfile` builds and serves via nginx).
+## 🧪 Testing
 
-## Known issues & recommended fixes
+Run tests:
 
-- `src/components/RealtimeMetric.jsx` had a duplicate `className` attribute; it has been fixed to preserve the `status-badge` class and apply the conditional `offline` class.
-- `src/services/websocket.js` now initializes `notificationId` and guards `disconnect()` to avoid runtime errors when the socket is not open.
-- `README.md` updated with these instructions and Docker notes.
+```bash
+npm test
+```
 
-## Run checklist
+Covers:
 
-- Frontend environment: ensure `VITE_WS_URL` points to the correct WebSocket server.
-- To test deletion and clear-all: use the Notifications panel; the mock server will also emit notifications automatically.
+- WebSocket logic  
+- Notification behavior  
+- Error handling  
 
-If you want, I can also add a short script to run an automated smoke test that connects and verifies messages.
+---
+
+
+
+## 🎥 Video Demo
+
+Include `https://drive.google.com/file/d/14veLiLV9pMangehTZstDMEvc-JnvgdRx/view?usp=sharing` (2–5 minutes) demonstrating:
+
+- WebSocket connection  
+- Live metric updates  
+- Notification arrival  
+- Individual dismiss  
+- Clear All  
+- Responsive behavior  
+
+---
+
+## 👨‍💻 Author
+
+**Vinay Nethala**  
+CSE Student  
+
+---
+
+## 📜 License
+
+This project is for educational and assessment purposes.
