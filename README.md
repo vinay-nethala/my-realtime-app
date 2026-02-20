@@ -22,20 +22,22 @@ The widget is designed to be easily embedded into larger dashboard systems.
 
 ## 🏗️ Architecture
 
-### High-Level Flow
-
 ```mermaid
 flowchart LR
-    A[Mock WebSocket Server (Node + ws)]
-    B[WebSocket Client Service]
-    C[Global State Store (Context or Zustand)]
-    D[RealtimeMetric Component]
-    E[NotificationCenter Component]
+    U["User (Browser / Mobile)"]
+    N["Next.js Frontend"]
+    W["WebSocket Server (Node + ws)"]
+    S["State Management (Context or Zustand)"]
+    C["UI Components (Metrics and Notifications)"]
+    D["Docker Environment"]
 
-    A -->|WebSocket Messages| B
-    B --> C
-    C --> D
-    C --> E
+    U --> N
+    N --> W
+    W --> S
+    S --> C
+    C --> U
+    N --- D
+    W --- D
 ```
 
 ---
