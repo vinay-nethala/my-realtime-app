@@ -21,8 +21,8 @@ The widget is designed to be easily embedded into larger dashboard systems.
 ---
 
 ## 🏗️ Architecture
-## flowchart LR
 
+### High-Level Flow
 
 ```mermaid
 flowchart LR
@@ -193,7 +193,15 @@ The application follows WCAG 2.1 AA best practices:
 
 ---
 
+## 🔧 Environment Variables
 
+Create `.env` from example:
+
+```
+VITE_WS_URL=ws://localhost:8080
+```
+
+---
 
 ## 🖥️ Local Development Setup
 
@@ -255,10 +263,10 @@ Covers:
 ---
 
 
+## 🎥 Demo Video
 
-## 🎥 Video Demo
+[▶️ Watch Demo Video](https://drive.google.com/file/d/14veLiLV9pMangehTZstDMEvc-JnvgdRx/view?usp=sharing)
 
-Include `https://drive.google.com/file/d/14veLiLV9pMangehTZstDMEvc-JnvgdRx/view?usp=sharing` (2–5 minutes) demonstrating:
 
 - WebSocket connection  
 - Live metric updates  
